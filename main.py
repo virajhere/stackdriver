@@ -1,5 +1,28 @@
 from flask import Flask, request
 app = Flask(__name__)
+
+class StringProcessor():
+    def __init__(self, string):
+        self._string = string
+
+    def Reverse(self):
+        if self._string == '':
+            return ''
+
+        chars = [c for c in self._string]
+        left = 0
+        right = len(chars) - 1
+        while True:
+            tmp = chars[left]
+            chars[left] = chars[right]
+            chars[right] = tmp
+            if left >= right:
+                break
+            left += 1
+            right -= 1
+
+        return ''.join(chars)
+
 @app.route('/reverse_string', methods=['GET'])
 def ReverseString():
     try:
