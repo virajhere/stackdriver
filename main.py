@@ -1,9 +1,20 @@
+import logging
 
-from google.cloud import error_reporting
 from flask import Flask, request
+
+# Enable cloud debugger
+try:
+    import googleclouddebugger
+    googleclouddebugger.enable()
+except ImportError:
+    pass
+
+logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 
+
+# There is a bug in the code.
 class StringProcessor():
     def __init__(self, string):
         self._string = string
@@ -26,23 +37,15 @@ class StringProcessor():
 
         return ''.join(chars)
 
-@app.errorhandler(500)
-def server_error(e):
-    client = error_reporting.Client()
-    client.report_exception(
-        http_context=error_reporting.build_flask_context(request))
-    return """
-    An internal error occurred.
-    """, 500
 
 @app.route('/reverse_string', methods=['GET'])
-def ReverseString():    
-    x[3]
+def ReverseString():
     try:
         s = str(request.args.get('string'))
     except Exception as e:
         print(e)
         return 'Not a valid string!'
+
     current = StringProcessor(s).Reverse()
     expected = s[::-1]
     return '''
