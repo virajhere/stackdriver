@@ -1,6 +1,14 @@
 
-from google.cloud import error_reporting
+from google.cloud import logging
 from flask import Flask, request
+
+# Instantiates a client
+logging_client = logging.Client()
+
+# The name of the log to write to
+log_name = 'demo'
+# Selects the log to write to
+logger = logging_client.logger(log_name)
 
 app = Flask(__name__)
 
@@ -26,23 +34,15 @@ class StringProcessor():
 
         return ''.join(chars)
 
-@app.errorhandler(500)
-def server_error(e):
-    client = error_reporting.Client()
-    client.report_exception(
-        http_context=error_reporting.build_flask_context(request))
-    return """
-    An internal error occurred.
-    """, 500
-
 @app.route('/reverse_string', methods=['GET'])
-def ReverseString():    
-    x[3]
+def ReverseString():
+    logger.log_text("INFO: Data is submitted by end user")
     try:
         s = str(request.args.get('string'))
     except Exception as e:
         print(e)
         return 'Not a valid string!'
+
     current = StringProcessor(s).Reverse()
     expected = s[::-1]
     return '''
